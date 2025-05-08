@@ -1,0 +1,87 @@
+
+//UTILIZANDO MAIS SOBRE SQUELIZE E SEUS COMANDOS OP ( TANTO FINDS, COMO COUNTS)
+
+
+
+import { Op } from "sequelize";
+
+import "./database";
+import Customer from "./app/models/Customer";
+import Contact from "./app/models/Contact";
+
+class Playground {
+  static async play() {
+    // const customer = await Customer.findByPk(1);
+
+    // const customer = await Customer.findOne({
+    //     attributes: { exclude: ["status"]S },
+    //   });
+
+    const customers1 = await Customer.min("createdAt", {
+      where: {
+        status: "ACTIVE",
+      },
+    });
+
+    console.log(JSON.stringify(customers1, null, 2));
+
+    const customers = await Customer.count({
+      include: [
+        {
+          model: Contact,
+          where: {
+            status: "ACTIVE",
+          },
+          required: false,
+        },
+      ],
+      where: {
+        [Op.or]: {
+          status: { [Op.in]: ["ACTIVE", "ARCHIVED"] },
+          name: {
+            [Op.like]: "Dev%",
+          },
+        },
+
+        createdAt: {
+          [Op.between]: [new Date(2019, 1, 1), new Date(2029, 12, 31)],
+        },
+      },
+      order: [["name", "DESC"], ["createdAt"]],
+      limit: 25,
+      offset: 25 * 1 - 25, // limit * page - limit
+    });
+
+    console.log(JSON.stringify(customers, null, 2));
+  }
+}
+Playground.play();
+
+
+////////////////////////////////
+
+//Adicionado Scopos ( funcoes pré prontas no proprio controller)
+
+// import { Op } from "sequelize";
+
+import "./database";
+import Customer from "./app/models/Customer";
+// import Contact from "./app/models/Contact";
+
+class Playground {
+  static async play() {
+    const customer1 = await Customer.scope(["active", "samurai"]).findAll();
+    console.log(JSON.stringify(customer1, null, 2));
+
+    const customer2 = await Customer.scope([
+      ["active"],
+      {
+        metodh: ["created", new Date("2023-01-01")],
+      },
+    ]).findAll();
+
+    console.log(JSON.stringify(customer2, null, 2));
+  }
+}
+Playground.play();
+ 

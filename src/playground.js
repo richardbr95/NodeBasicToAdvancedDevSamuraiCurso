@@ -3,11 +3,12 @@ import Customer from "./app/models/Customer";
 
 class Playground {
   static async play() {
-    const customers = await Customer.findAll({
-      attributes: { exclude: ["status", "id"] },
+    const customer = await Customer.create({
+      name: "SupermercadoZaZa",
+      email: "contatoZaza@gmail.com",
     });
 
-    console.log(JSON.stringify(customers, null, 2));
+    console.log(JSON.stringify(customer, null, 2));
   }
 }
 Playground.play();
