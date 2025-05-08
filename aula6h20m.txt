@@ -1,0 +1,52 @@
+//Utilização de Middlewares
+
+//middlewares globais
+
+server.use((res, req, next) => {
+
+    return res.json({ ok: "Logado com sucesso" })
+
+    next();
+
+});
+
+//middlewares locais
+
+const checkNameExists = (req, res, next) => {
+    const { name } = req.query;
+
+    if(!name) {
+        return res.status(400).json({ error: "Name param not found" })
+    }
+
+    next();
+};
+
+const checkUserPermission = (req, res, next) => {
+    const usersAllowed = ["Felipe", "Bruno"];
+    const { name } = req.query;
+
+    if (!usersAllowed.includes(name)) {
+         return res.status(401).json({ error: "User not allowed to acess this resource" })
+    }
+
+    next();
+};
+
+const express = require("express");
+const server = express();
+
+
+server.get("/hello", checkNameExists, checkUserPermission, (req, res) => {
+  const { nome, idade } = req.query;
+
+  return res.json({
+    title: "Hello World",
+    message: `Ola ${nome} tudo bem com vc`,
+    idade: idade,
+  });
+});
+
+
+server.listen(3000);
+

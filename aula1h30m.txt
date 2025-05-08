@@ -1,0 +1,32 @@
+const express = require("express");
+const server = express();
+
+// http://localhost:3000/hello?nome=Felipe&idade=21
+// Query Params = ?nome=Felipe&idade=21
+
+server.get("/hello", (req, res) => {
+  const { nome, idade } = req.query;
+
+  return res.json({
+    title: "Hello World",
+    message: `Ola ${nome} tudo bem com vc`,
+    idade: idade,
+  });
+});
+
+// http://localhost:3000/hello/felipe
+// Rote Params = /hello/:nome
+
+server.get("/hello/:nome", (req, res) => {
+  const nome = req.params.nome;
+
+  return res.json({
+    title: "Hello World",
+    message: `Ola ${nome}`,
+  });
+});
+
+server.listen(3000);
+
+
+//usamos Query Params (?nome=Richard) e usamos Rote Params (/hello/:nome)

@@ -1,0 +1,22 @@
+// async index(req, res) {
+  //   try {
+  //     const customers = await Customer.findAll();
+  //     console.log("Clientes encontrados:", customers);
+  //     return res.json(customers);
+  //   } catch (error) {
+  //     console.error("Erro ao buscar clientes:", error);
+  //     return res.status(500).json({ error: "Erro ao buscar clientes" });
+  //   }
+  // }
+
+  Erros : o sequelize nao conseguio encontrar a 
+  tabela (created_at e updated_at) foi necessario
+  usar um catch error.
+
+   
+   Outros => ========== retirado do Customer.js (models, ao lado do sequelizee underscored)
+
+    // modelName: "Customer",
+        // tableName: "customers", // <-- aqui está o segredo
+
+   ==================
