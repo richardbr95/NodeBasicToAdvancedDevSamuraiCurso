@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import { parseISO } from "date-fns";
 import * as Yup from "yup";
 import User from "../models/User";
+import Mail from "../../lib/Mail";
 import bcrypt from "bcryptjs";
 
 class UsersController {
@@ -96,14 +97,18 @@ class UsersController {
   }
 
   async show(req, res) {
-    const user = await User.findByPk(req.params.id);
+    const user = await User.findByPk(req.params.id, {
+      attributes: {
+        exclude: ["password", "password_hash"],
+      },
+    });
 
     if (!user) {
       return res.status(404).json();
     }
-    const { id, name, email, createdAt, updatedAt } = user;
+    const { id, name, email, file_id, createdAt, updatedAt } = user;
 
-    return res.json({ id, name, email, createdAt, updatedAt });
+    return res.json({ id, name, email, file_id, createdAt, updatedAt });
   }
 
   async create(req, res) {
@@ -114,20 +119,34 @@ class UsersController {
       password_confirmation: Yup.string().when(
         "password",
         (password, field) => {
-          password ? field.required().oneOf([Yup.ref("password")]) : field;
+          return password
+            ? field
+                .required("Confirmação de senha obrigatória")
+                .oneOf(
+                  [Yup.ref("password")],
+                  "A confirmação de senha não corresponde"
+                )
+            : field;
         }
       ),
     });
-
     if (!(await schema.isValid(req.body))) {
+      console.log(req.body);
       return res.status(400).json({ error: "Error on validate schema." });
     }
 
-    const { id, name, email, createdAt, updatedAt } = await User.create(
-      req.body
-    );
+    const { id, name, email, file_id, createdAt, updatedAt } =
+      await User.create(req.body);
 
-    return res.status(201).json({ id, name, email, createdAt, updatedAt });
+    Mail.send({
+      to: email,
+      subject: "Bem-vindo(a)",
+      text: `Ola ${name}, bem-vindo(a) ao nosso sistema`,
+    });
+
+    return res
+      .status(201)
+      .json({ id, name, email, file_id, createdAt, updatedAt });
   }
 
   async update(req, res) {
@@ -172,9 +191,11 @@ class UsersController {
     // Atualiza os dados do usuário
     await user.update(updateData);
 
-    const { id, name, email, createdAt, updatedAt } = user;
+    const { id, name, email, file_id, createdAt, updatedAt } = user;
 
-    return res.status(200).json({ id, name, email, createdAt, updatedAt });
+    return res
+      .status(200)
+      .json({ id, name, email, file_id, createdAt, updatedAt });
   }
 
   async destroy(req, res) {
