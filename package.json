@@ -5,6 +5,7 @@
     "@sequelize/core": "^7.0.0-alpha.46",
     "@sequelize/postgres": "^7.0.0-alpha.46",
     "bcryptjs": "^3.0.2",
+    "bee-queue": "^1.7.1",
     "date-fns": "^4.1.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -25,6 +26,6 @@
   },
   "scripts": {
     "dev": "nodemon ./src/server.js",
-    "playground": "nodemon ./src/playground.js"
+    "queue": "nodemon ./src/queue.js"
   }
 }

@@ -45,9 +45,5 @@ routes.delete("/users/:id", users.destroy);
 // Files
 
 routes.post("/files", upload.single("file"), files.create);
-// Dentro do arquivo routes.js (ou onde define as rotas)
-routes.post("/test", (req, res) => {
-  console.log("Corpo recebido:", req.body);
-  res.json({ recebido: req.body });
-});
+
 export default routes;
